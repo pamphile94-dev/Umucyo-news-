@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - UMUCYO NEWS</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .admin-page {
+      padding: 35px 0 60px;
+    }
+
+    .admin-title {
+      margin-bottom: 25px;
+    }
+
+    .admin-title h1 {
+      font-size: 32px;
+      margin-bottom: 5px;
+    }
+
+    .admin-title p {
+      color: #6b7280;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    .admin-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+
+    .admin-card h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    .publish-button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 7px;
+      background: #1d4ed8;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .publish-button:hover {
+      background: #1e40af;
+    }
+
+    .message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 7px;
+      display: none;
+    }
+
+    .message.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .admin-article {
+      padding: 15px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .admin-article h3 {
+      margin-bottom: 5px;
+      font-size: 17px;
+    }
+
+    .admin-article-meta {
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .delete-button {
+      border: none;
+      background: #dc2626;
+      color: white;
+      padding: 7px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .admin-header {
+      background: #111827;
+      color: white;
+    }
+
+    .admin-header-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-logo {
+      color: white;
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .admin-logo span {
+      color: #fbbf24;
+    }
+
+    .back-home {
+      color: white;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="admin-header">
+  <div class="container admin-header-inner">
+
+    <a href="/" class="admin-logo">
+      UMUCYO <span>NEWS</span>
+    </a>
+
+    <a href="/" class="back-home">
+      ← View Website
+    </a>
+
+  </div>
+</header>
+
+
+<main class="admin-page">
+
+  <div class="container">
+
+    <div class="admin-title">
+      <h1>News Administration</h1>
+      <p>Create and manage UMUCYO NEWS articles.</p>
+    </div>
+
+
+    <div class="admin-layout">
+
+
+      <section class="admin-card">
+
+        <h2>Add New Article</h2>
+
+        <form id="articleForm">
+
+          <div class="form-group">
+            <label for="title">Title</label>
+
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Enter article title"
+              required
+            >
+          </div>
+
+
+          <div class="form-group">
+            <label for="category">Category</label>
+
+            <select
+              id="category"
+              name="category"
+              required
+            >
+
+              <option value="">Select category</option>
+              <option value="Rwanda">Rwanda</option>
+              <option value="Africa">Africa</option>
+              <option value="World">World</option>
+              <option value="Sports">Sports</option>
+              <option value="Business">Business</option>
+              <option value="Technology">Technology</option>
+
+            </select>
+          </div>
+
+
+          <div class="form-group">
+            <label for="image">Article Image</label>
+
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+            >
+          </div>
+
+
+          <div class="form-group">
+            <label for="content">Article Content</label>
+
+            <textarea
+              id="content"
+              name="content"
+              placeholder="Write your article here..."
+              required
+            ></textarea>
+          </div>
+
+
+          <div class="form-group">
+            <label for="author">Author</label>
+
+            <input
+              type="text"
+              id="author"
+              name="author"
+              placeholder="Author name"
+              required
+            >
+          </div>
+
+
+          <button
+            type="submit"
+            class="publish-button"
+          >
+            Publish Article
+          </button>
+
+
+          <div id="message" class="message"></div>
+
+        </form>
+
+      </section>
+
+
+      <section class="admin-card">
+
+        <h2>Published Articles</h2>
+
+        <div id="adminArticles">
+          <p class="loading">
+            Loading articles...
+          </p>
+        </div>
+
+      </section>
+
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<footer class="site-footer">
+
+  <div class="container">
+
+    <div class="copyright">
+      © 2026 UMUCYO NEWS. All rights reserved.
+    </div>
+
+  </div>
+
+</footer>
+
+
+<script>
+
+const form =
+  document.getElementById("articleForm");
+
+const message =
+  document.getElementById("message");
+
+const adminArticles =
+  document.getElementById("adminArticles");
+
+
+async function loadAdminArticles() {
+
+  try {
+
+    const response =
+      await fetch("/api/articles");
+
+    if (!response.ok) {
+      throw new Error("Failed to load articles");
+    }
+
+    const articles =
+      await response.json();
+
+
+    if (articles.length === 0) {
+
+      adminArticles.innerHTML =
+        "<p class='loading'>No articles published yet.</p>";
+
+      return;
+    }
+
+
+    adminArticles.innerHTML =
+      articles.map(article => {
+
+        const date =
+          article.created_at
+            ? new Date(
+                article.created_at
+              ).toLocaleDateString()
+            : "";
+
+        return `
+          <div class="admin-article">
+
+            <h3>
+              ${escapeHtml(article.title)}
+            </h3>
+
+            <div class="admin-article-meta">
+              ${escapeHtml(article.category)}
+              •
+              ${escapeHtml(article.author)}
+              •
+              ${date}
+            </div>
+
+            <button
+              class="delete-button"
+              onclick="deleteArticle(${article.id})"
+            >
+              Delete
+            </button>
+
+          </div>
+        `;
+
+      }).join("");
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    adminArticles.innerHTML =
+      "<p class='loading'>Unable to load articles.</p>";
+
+  }
+
+}
+
+
+form.addEventListener(
+  "submit",
+  async function(event) {
+
+    event.preventDefault();
+
+    const formData =
+      new FormData(form);
+
+    message.className =
+      "message success";
+
+    message.textContent =
+      "Publishing article...";
+
+    message.style.display =
+      "block";
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/articles",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+          "Failed to publish article."
+        );
+      }
+
+
+      message.textContent =
+        "Article published successfully!";
+
+      form.reset();
+
+      loadAdminArticles();
+
+
+    } catch (error) {
+
+      message.className =
+        "message error";
+
+      message.textContent =
+        error.message;
+
+    }
+
+  }
+);
+
+
+async function deleteArticle(id) {
+
+  if (!confirm("Delete this article?")) {
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/articles/" + id,
+        {
+          method: "DELETE"
+        }
+      );
+
+
+    if (!response.ok) {
+      throw new Error("Failed to delete article.");
+    }
+
+
+    loadAdminArticles();
+
+
+  } catch (error) {
+
+    alert(error.message);
+
+  }
+
+}
+
+
+function escapeHtml(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text || "";
+
+  return div.innerHTML;
+
+}
+
+
+loadAdminArticles();
+
+</script>
+
+</body>
+</html>

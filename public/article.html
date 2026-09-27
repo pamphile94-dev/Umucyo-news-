@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Article - UMUCYO NEWS</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <style>
+
+    .comments-section {
+      margin-top: 40px;
+      padding: 25px;
+      border-top: 2px solid #ddd;
+    }
+
+    .comments-section h2 {
+      margin-bottom: 20px;
+    }
+
+    #commentForm {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    #commentForm input,
+    #commentForm textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    #commentForm button {
+      width: fit-content;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #111827;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .comment {
+      padding: 15px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .comment strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .comment p {
+      margin: 5px 0;
+    }
+
+    .comment small {
+      color: #777;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <header class="top-header">
+
+    <div class="container header-inner">
+
+      <div id="liveClock" class="live-clock">
+        Loading time...
+      </div>
+
+      <a href="/" class="logo">
+        UMUCYO
+        <span>NEWS</span>
+      </a>
+
+      <button
+        class="menu-button"
+        id="menuButton"
+      >
+        ☰
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <nav
+    class="main-nav"
+    id="mainNav"
+  >
+
+    <div class="container nav-inner">
+
+      <a href="/">Home</a>
+
+      <a href="/?category=Rwanda">
+        Rwanda
+      </a>
+
+      <a href="/?category=Africa">
+        Africa
+      </a>
+
+      <a href="/?category=World">
+        World
+      </a>
+
+      <a href="/?category=Sports">
+        Sports
+      </a>
+
+      <a href="/?category=Business">
+        Business
+      </a>
+
+      <a href="/?category=Technology">
+        Technology
+      </a>
+
+    </div>
+
+  </nav>
+
+
+  <main>
+
+    <section class="article-section">
+
+      <div class="container">
+
+        <div id="article">
+
+          <p class="loading">
+            Loading article...
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer class="site-footer">
+
+    <div class="container">
+
+      <div class="footer-content">
+
+        <div>
+
+          <div class="footer-logo">
+            UMUCYO NEWS
+          </div>
+
+          <p>
+            Trusted news from Rwanda,
+            Africa and around the world.
+          </p>
+
+        </div>
+
+        <div class="footer-links">
+
+          <a href="/">
+            Home
+          </a>
+
+          <a href="/admin">
+            Admin
+          </a>
+
+          <a
+            href="https://youtube.com/@homumediatv9677?si=68iFraC87a-WgBmY"
+            target="_blank"
+          >
+            YouTube
+          </a>
+
+          <a
+            href="https://www.facebook.com/share/1DV5Jb38AM/"
+            target="_blank"
+          >
+            Facebook
+          </a>
+
+        </div>
+
+      </div>
+
+      <div class="copyright">
+
+        © 2026 UMUCYO NEWS.
+        All rights reserved.
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <script>
+
+    const articleContainer =
+      document.getElementById("article");
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const id =
+      params.get("id");
+
+
+    function escapeHtml(text) {
+
+      const div =
+        document.createElement("div");
+
+      div.textContent =
+        text || "";
+
+      return div.innerHTML;
+
+    }
+
+
+    function updateClock() {
+
+      const clock =
+        document.getElementById("liveClock");
+
+      if (!clock) return;
+
+      const now = new Date();
+
+      clock.textContent =
+        now.toLocaleTimeString(
+          "en-RW",
+          {
+            timeZone: "Africa/Kigali",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+          }
+        );
+
+    }
+
+
+    updateClock();
+
+    setInterval(
+      updateClock,
+      1000
+    );
+
+
+    const menuButton =
+      document.getElementById("menuButton");
+
+    const mainNav =
+      document.getElementById("mainNav");
+
+
+    if (menuButton && mainNav) {
+
+      menuButton.addEventListener(
+        "click",
+        () => {
+
+          mainNav.classList.toggle(
+            "show"
+          );
+
+        }
+      );
+
+    }
+
+
+    async function loadComments() {
+
+      const commentsList =
+        document.getElementById(
+          "commentsList"
+        );
+
+      if (!commentsList) return;
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/articles/" +
+            id +
+            "/comments"
+          );
+
+        const comments =
+          await response.json();
+
+
+        if (comments.length === 0) {
+
+          commentsList.innerHTML =
+            "<p>No comments yet. Be the first to comment!</p>";
+
+          return;
+
+        }
+
+
+        commentsList.innerHTML =
+          comments.map(
+            comment => `
+
+              <div class="comment">
+
+                <strong>
+                  ${escapeHtml(comment.name)}
+                </strong>
+
+                <p>
+                  ${escapeHtml(comment.comment)}
+                </p>
+
+                <small>
+                  ${new Date(
+                    comment.created_at
+                  ).toLocaleString()}
+                </small>
+
+              </div>
+
+            `
+          ).join("");
+
+      } catch (error) {
+
+        console.error(error);
+
+        commentsList.innerHTML =
+          "<p>Unable to load comments.</p>";
+
+      }
+
+    }
+
+
+    async function submitComment(event) {
+
+      event.preventDefault();
+
+
+      const name =
+        document.getElementById(
+          "commentName"
+        ).value.trim();
+
+
+      const comment =
+        document.getElementById(
+          "commentText"
+        ).value.trim();
+
+
+      if (!name || !comment) {
+
+        return;
+
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/articles/" +
+            id +
+            "/comments",
+            {
+
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+                name: name,
+                comment: comment
+              })
+
+            }
+          );
+
+
+        if (!response.ok) {
+
+          alert(
+            "Unable to post comment."
+          );
+
+          return;
+
+        }
+
+
+        document
+          .getElementById(
+            "commentForm"
+          )
+          .reset();
+
+
+        await loadComments();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Unable to post comment."
+        );
+
+      }
+
+    }
+
+
+    async function loadArticle() {
+
+      if (!id) {
+
+        articleContainer.innerHTML = `
+          <h2>Article not found.</h2>
+          <p>
+            Return to the homepage to view
+            available news.
+          </p>
+          <a href="/">
+            ← Back to UMUCYO NEWS
+          </a>
+        `;
+
+        return;
+
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/articles/" +
+            id
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            "Article not found"
+          );
+
+        }
+
+
+        const article =
+          await response.json();
+
+
+        document.title =
+          article.title +
+          " - UMUCYO NEWS";
+
+
+        const image =
+          article.image
+            ? article.image
+            : "https://via.placeholder.com/1200x600?text=UMUCYO+NEWS";
+
+
+        const date =
+          article.created_at
+            ? new Date(
+                article.created_at
+              ).toLocaleString(
+                "en-RW",
+                {
+                  timeZone:
+                    "Africa/Kigali",
+                  dateStyle:
+                    "medium",
+                  timeStyle:
+                    "short"
+                }
+              )
+            : "";
+
+
+        articleContainer.innerHTML = `
+
+          <article class="article-card">
+
+            <img
+              src="${image}"
+              alt="${escapeHtml(article.title)}"
+              class="article-image"
+            >
+
+
+            <div class="article-content">
+
+              <div class="article-category">
+
+                ${escapeHtml(
+                  article.category
+                )}
+
+              </div>
+
+
+              <h1 class="article-title">
+
+                ${escapeHtml(
+                  article.title
+                )}
+
+              </h1>
+
+
+              <div class="article-meta">
+
+                By
+                <strong>
+                  ${escapeHtml(
+                    article.author
+                  )}
+                </strong>
+
+                •
+
+                ${date}
+
+              </div>
+
+
+              <div class="article-body">
+
+                ${escapeHtml(
+                  article.content
+                )}
+
+              </div>
+
+
+              <section class="comments-section">
+
+                <h2>
+                  Comments
+                </h2>
+
+
+                <form
+                  id="commentForm"
+                >
+
+                  <input
+                    type="text"
+                    id="commentName"
+                    placeholder="Your name"
+                    required
+                  >
+
+
+                  <textarea
+                    id="commentText"
+                    placeholder="Write your comment..."
+                    rows="4"
+                    required
+                  ></textarea>
+
+
+                  <button
+                    type="submit"
+                  >
+                    Post Comment
+                  </button>
+
+                </form>
+
+
+                <div
+                  id="commentsList"
+                >
+                  Loading comments...
+                </div>
+
+              </section>
+
+
+              <br>
+
+
+              <a
+                href="/"
+                class="read-more"
+              >
+                ← Back to UMUCYO NEWS
+              </a>
+
+            </div>
+
+          </article>
+
+        `;
+
+
+        document
+          .getElementById(
+            "commentForm"
+          )
+          .addEventListener(
+            "submit",
+            submitComment
+          );
+
+
+        await loadComments();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        articleContainer.innerHTML = `
+
+          <div class="article-not-found">
+
+            <h2>
+              Unable to load this article.
+            </h2>
+
+            <p>
+              Return to the homepage to view
+              available news.
+            </p>
+
+            <a href="/">
+              ← Back to UMUCYO NEWS
+            </a>
+
+          </div>
+
+        `;
+
+      }
+
+    }
+
+
+    loadArticle();
+
+  </script>
+
+</body>
+
+</html>

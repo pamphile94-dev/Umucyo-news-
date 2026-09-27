@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMUCYO NEWS</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">UMUCYO NEWS</a>
+
+    <nav class="main-nav">
+      <a href="/">Home</a>
+      <a href="/?category=Rwanda">Rwanda</a>
+      <a href="/?category=Africa">Africa</a>
+      <a href="/?category=World">World</a>
+      <a href="/?category=Sports">Sports</a>
+      <a href="/?category=Business">Business</a>
+      <a href="/?category=Technology">Technology</a>
+    </nav>
+  </div>
+</header>
+
+<div class="breaking-bar">
+  <div class="container">
+    <strong>BREAKING NEWS</strong>
+    <span id="breakingNews">Latest news from UMUCYO NEWS</span>
+  </div>
+</div>
+
+<main class="container">
+
+  <section class="hero">
+    <div>
+      <span class="hero-label">UMUCYO NEWS</span>
+      <h1>News You Can Trust</h1>
+      <p>
+        Latest news, stories and updates from Rwanda,
+        Africa and around the world.
+      </p>
+    </div>
+  </section>
+
+  <div class="search-box">
+    <input
+      type="search"
+      id="searchInput"
+      placeholder="Search UMUCYO NEWS..."
+    >
+    <button onclick="searchArticles()">Search</button>
+  </div>
+
+  <section class="latest-section">
+    <h2>Latest News</h2>
+
+    <div id="articles" class="articles-grid">
+      <p>Loading news...</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 UMUCYO NEWS. All rights reserved.</p>
+    <p>Rwanda's trusted source for news.</p>
+  </div>
+</footer>
+
+<script>
+async function loadArticles() {
+  const articlesContainer =
+    document.getElementById("articles");
+
+  try {
+    const response = await fetch("/api/articles");
+
+    if (!response.ok) {
+      throw new Error("Failed to load articles");
+    }
+
+    const articles = await response.json();
+
+    if (!articles || articles.length === 0) {
+      articlesContainer.innerHTML =
+        "<p>No news articles available yet.</p>";
+      return;
+    }
+
+    articlesContainer.innerHTML = articles.map(article => {
+
+      const image = article.image
+        ? `<img src="${article.image}" alt="${escapeHtml(article.title)}">`
+        : "";
+
+      return `
+        <article class="article-card">
+          ${image}
+
+          <div class="article-content">
+            <span class="category">
+              ${escapeHtml(article.category || "News")}
+            </span>
+
+            <h3>
+              <a href="/article.html?id=${article.id}">
+                ${escapeHtml(article.title)}
+              </a>
+            </h3>
+
+            <p>
+              ${escapeHtml(
+                article.excerpt ||
+                article.content ||
+                ""
+              ).substring(0, 160)}
+            </p>
+
+            <div class="article-meta">
+              <span>
+                ${escapeHtml(article.author || "Umucyo")}
+              </span>
+
+              <span>
+                ${formatDate(article.created_at)}
+              </span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error(error);
+
+    articlesContainer.innerHTML =
+      "<p>Unable to load news. Please refresh the page.</p>";
+  }
+}
+
+function searchArticles() {
+  const input =
+    document.getElementById("searchInput");
+
+  const search =
+    input.value.toLowerCase().trim();
+
+  const cards =
+    document.querySelectorAll(".article-card");
+
+  cards.forEach(card => {
+    const text =
+      card.textContent.toLowerCase();
+
+    if (text.includes(search)) {
+      card.style.display = "";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+function formatDate(date) {
+  if (!date) return "";
+
+  const d = new Date(date);
+
+  if (isNaN(d.getTime())) {
+    return "";
+  }
+
+  return d.toLocaleDateString();
+}
+
+function escapeHtml(text) {
+  if (text === null || text === undefined) {
+    return "";
+  }
+
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+document
+  .getElementById("searchInput")
+  .addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      searchArticles();
+    }
+  });
+
+loadArticles();
+</script>
+
+</body>
+</html>
